@@ -37,12 +37,12 @@ L.control.layers(baseMaps, overlayMaps, { collapsed: false }).addTo(myMap);
 
 // Define a color function based on depth
 function chooseColor(depth) {
-    return depth > 90 ? "#ea2c2c" :
-           depth > 70 ? "#ea822c" :
-           depth > 50 ? "#ee9c00" :
-           depth > 30 ? "#eecc00" :
-           depth > 10 ? "#d4ee00" :
-                        "#98ee00";
+    return depth > 90 ? "#e0c501" :
+           depth > 70 ? "#60007b" :
+           depth > 50 ? "#93007b" :
+           depth > 30 ? "#c96f01" :
+           depth > 10 ? "#d29101" :
+                        "#e88901";
 }
 
 // Define a size function based on magnitude
@@ -58,7 +58,7 @@ function formatCircleMarker(feature, latlng) {
         color: "#000",
         weight: 0.5,
         opacity: 1,
-        fillOpacity: 0.8
+        fillOpacity: 1.5
     };
 }
 
@@ -100,7 +100,8 @@ legend.onAdd = function () {
 
     // Set up the depth ranges and corresponding colors
     let depthRange = [-10, 10, 30, 50, 70, 90];
-    let colors = ["#98ee00", "#d4ee00", "#eecc00", "#ee9c00", "#ea822c", "#ea2c2c"];
+    let colors = ["#e0c501", "#d29101", "#c96f01", "#93007b", "#60007b", "#2f007b"];
+
     
     // Create the container for the legend content
     let legendHtml = `
