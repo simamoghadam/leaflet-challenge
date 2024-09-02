@@ -1,4 +1,9 @@
 # leaflet-challenge
+
+Note: The Leaflet-Part-1 and Leaflet-Part-2 folders have not been created. The Leaflet-Part-1 project has been deployed, so it was kept outside of the folder structure. The Leaflet-Part-2 project is not there and will not be completed.
+
+
+
 please click  on the link to veiw the live project :  https://simamoghadam.github.io/leaflet-challenge/
 
 screenshot of the map below :
