@@ -1,10 +1,10 @@
- // Initialize the map
- let myMap = L.map("map", {
-    center: [25.276987, 55.296249],
+// Initialise the map
+let myMap = L.map("map", {
+    center: [25.276987, 55.296249], // Dubai (Middle East) coordinates
     zoom: 3
 });
 
-// Define base layers
+// Define base layers ( Using OpenStreetMap for street view )
 let street = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(myMap);
@@ -13,27 +13,9 @@ let topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
     attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
 });
 
-// Leaflet doesn’t directly support Google's map tiles due to Google's licensing terms.
-// If needed, use another tile provider or properly integrate Google Maps.
 
-// Base map options
-let baseMaps = {
-    "Street Map": street,
-    "Topographic Map": topo
-};
-
-// Create LayerGroups for overlays
-let earthquakes = new L.LayerGroup();
-let plates = new L.LayerGroup();
-
-// Overlay options
-let overlayMaps = {
-    Earthquakes: earthquakes,
-    TectonicPlates: plates
-};
-
-// Layer control
-L.control.layers(baseMaps, overlayMaps, { collapsed: false }).addTo(myMap);
+// Create LayerGroup for earthquakes
+let earthquakes = new L.LayerGroup().addTo(myMap);
 
 // Define a color function based on depth
 function chooseColor(depth) {
@@ -58,7 +40,7 @@ function formatCircleMarker(feature, latlng) {
         color: "#000",
         weight: 0.5,
         opacity: 1,
-        fillOpacity: 1.5
+        fillOpacity: 1
     };
 }
 
@@ -75,22 +57,8 @@ fetch("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojso
             pointToLayer: (feature, latlng) => L.circleMarker(latlng, formatCircleMarker(feature)),
             onEachFeature: onEachFeature
         }).addTo(earthquakes);
-        earthquakes.addTo(myMap);
     })
     .catch(error => console.error('Error fetching earthquake data:', error));
-
-// Fetch tectonic plates data
-fetch("https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_plates.json")
-    .then(response => response.json())
-    .then(data => {
-        L.geoJSON(data, {
-            style: {
-                color: 'orange',
-                weight: 2
-            }
-        }).addTo(plates);
-    })
-    .catch(error => console.error('Error fetching tectonic plates data:', error));
 
 // Legend creation
 let legend = L.control({ position: "bottomright" });
@@ -102,7 +70,6 @@ legend.onAdd = function () {
     let depthRange = [-10, 10, 30, 50, 70, 90];
     let colors = ["#e0c501", "#d29101", "#c96f01", "#93007b", "#60007b", "#2f007b"];
 
-    
     // Create the container for the legend content
     let legendHtml = `
       <div style="background: white; padding: 10px; border-radius: 5px; box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);">
@@ -125,5 +92,5 @@ legend.onAdd = function () {
     div.innerHTML = legendHtml;
     return div;
 };
-
+// Add the legend to the map
 legend.addTo(myMap);
