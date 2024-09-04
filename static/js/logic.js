@@ -19,14 +19,13 @@ let earthquakes = new L.LayerGroup().addTo(myMap);
 
 // Define a color function based on depth
 function chooseColor(depth) {
-    return depth > 90 ? "#e0c501" :
-           depth > 70 ? "#60007b" :
-           depth > 50 ? "#93007b" :
-           depth > 30 ? "#c96f01" :
-           depth > 10 ? "#d29101" :
-                        "#e88901";
+    return depth > 90 ? "#4c0080" : // Dark Purple
+           depth > 70 ? "#800080" : // Purple
+           depth > 50 ? "#b30059" : // Dark Pink
+           depth > 30 ? "#cc2900" : // Dark Red-Orange
+           depth > 10 ? "#ff6600" : // Bright Orange
+                        "#ffcc00";  // Yellow-Orange
 }
-
 // Define a size function based on magnitude
 function chooseSize(magnitude) {
     return magnitude ? magnitude * 5 : 1;
@@ -46,12 +45,21 @@ function formatCircleMarker(feature, latlng) {
 
 // Function to bind popups for each feature
 function onEachFeature(feature, layer) {
-    layer.bindPopup(`<h3>${feature.properties.place}</h3><hr><p>${new Date(feature.properties.time)}</p><hr><p>Magnitude: ${feature.properties.mag}</p><hr><p>Depth: ${feature.geometry.coordinates[2]}</p>`);
+    const [longitude, latitude, depth] = feature.geometry.coordinates;
+    layer.bindPopup(`
+        <h3>${feature.properties.place}</h3>
+        <hr>
+        <p>${new Date(feature.properties.time)}</p>
+        <hr>
+        <p>Magnitude: ${feature.properties.mag}</p>
+        <p>Depth: ${depth} km</p>
+        <hr>
+        <p>Latitude: ${latitude.toFixed(2)}°, Longitude: ${longitude.toFixed(2)}°</p>
+    `);
 }
 
-// Fetch earthquakes data
-fetch("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson")
-    .then(response => response.json())
+// Fetch earthquakes data using D3
+d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson")
     .then(data => {
         L.geoJSON(data, {
             pointToLayer: (feature, latlng) => L.circleMarker(latlng, formatCircleMarker(feature)),
@@ -66,11 +74,11 @@ let legend = L.control({ position: "bottomright" });
 legend.onAdd = function () {
     let div = L.DomUtil.create("div", "info legend");
 
-    // Set up the depth ranges and corresponding colors
-    let depthRange = [-10, 10, 30, 50, 70, 90];
-    let colors = ["#e0c501", "#d29101", "#c96f01", "#93007b", "#60007b", "#2f007b"];
+// Set up the depth ranges and corresponding colors
+let depthRange = [-10, 10, 30, 50, 70, 90];
+let colors = ["#ffcc00", "#ff6600", "#cc2900", "#b30059", "#800080", "#4c0080"];
 
-    // Create the container for the legend content
+// Create the container for the legend content
     let legendHtml = `
       <div style="background: white; padding: 10px; border-radius: 5px; box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);">
         <div style='display: flex; flex-direction: column; align-items: stretch;'>
